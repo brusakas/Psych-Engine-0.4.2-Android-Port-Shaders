@@ -5,6 +5,7 @@ import Discord.DiscordClient;
 #end
 import Section.SwagSection;
 import Song.SwagSong;
+import Shaders.PulseEffect;
 import WiggleEffect.WiggleEffectType;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
@@ -137,6 +138,10 @@ class PlayState extends MusicBeatState
 	public var eventNotes:Array<Dynamic> = [];
 
 	private var strumLine:FlxSprite;
+
+	public static var screenshader:Shaders.PulseEffect = new PulseEffect();
+
+	public var curbg:FlxSprite;
 
 	//Handles the new epic mega sexy cam code that i've done
 	private var camFollow:FlxPoint;
@@ -393,6 +398,26 @@ class PlayState extends MusicBeatState
 					stageCurtains.updateHitbox();
 					add(stageCurtains);
 				}
+
+			case 'redsky':
+			{
+				defaultCamZoom = 0.85;
+				curStage = 'redsky';
+				var bg:FlxSprite = new FlxSprite(-600, -200).loadGraphic(Paths.image('redsky'));
+				bg.antialiasing = true;
+				bg.scrollFactor.set(0.6, 0.6);
+				bg.active = true;
+
+				add(bg);
+				#if windows
+				// below code assumes shaders are always enabled which is bad
+				var testshader:Shaders.GlitchEffect = new Shaders.GlitchEffect();
+				testshader.waveAmplitude = 0.1;
+				testshader.waveFrequency = 5;
+				testshader.waveSpeed = 2;
+				bg.shader = testshader.shader;
+				curbg = bg;
+				#end
 
 			case 'spooky': //Week 2
 				if(!ClientPrefs.lowQuality) {
@@ -703,6 +728,13 @@ class PlayState extends MusicBeatState
 		if(curStage == 'philly') insert(members.indexOf(blammedLightsBlack) + 1, phillyCityLightsEvent);
 		blammedLightsBlack = modchartSprites.get('blammedLightsBlack');
 		blammedLightsBlack.alpha = 0.0;
+
+		#if windows
+		screenshader.waveAmplitude = 1;
+        screenshader.waveFrequency = 2;
+        screenshader.waveSpeed = 1;
+        screenshader.shader.uTime.value[0] = new flixel.math.FlxRandom().float(-100000, 100000);
+		#end
 
 		var gfVersion:String = SONG.player3;
 		if(gfVersion == null || gfVersion.length < 1) {
@@ -1843,6 +1875,16 @@ class PlayState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
+	#if windows
+	if (curbg != null)
+	{
+		if (curbg.active) // only the furiosity background is active
+		{
+			var shad = cast(curbg.shader, Shaders.GlitchShader);
+			shad.uTime.value[0] += elapsed;
+		}
+	}
+	#end
 		/*if (FlxG.keys.justPressed.NINE)
 		{
 			iconP1.swapOldIcon();
@@ -2126,6 +2168,14 @@ class PlayState extends MusicBeatState
 			trace("RESET = True");
 		}
 		doDeathCheck();
+
+		#if windows
+		if (curSong.toLowerCase() == 'furiosity')
+			{
+				screenshader.shader.uampmul.value[0] = 0;
+				screenshader.Enabled = false;
+			}
+		#end
 
 		var roundedSpeed:Float = FlxMath.roundDecimal(songSpeed, 2);
 		if (unspawnNotes[0] != null)
