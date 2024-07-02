@@ -418,6 +418,7 @@ class PlayState extends MusicBeatState
 				bg.shader = testshader.shader;
 				curbg = bg;
 				#end
+			}
 
 			case 'spooky': //Week 2
 				if(!ClientPrefs.lowQuality) {
