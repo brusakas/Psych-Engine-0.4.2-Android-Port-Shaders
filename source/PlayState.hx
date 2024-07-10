@@ -409,7 +409,7 @@ class PlayState extends MusicBeatState
 				bg.active = true;
 
 				add(bg);
-				#if windows
+				#if android
 				// below code assumes shaders are always enabled which is bad
 				var testshader:Shaders.GlitchEffect = new Shaders.GlitchEffect();
 				testshader.waveAmplitude = 0.1;
