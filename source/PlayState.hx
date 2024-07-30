@@ -730,7 +730,7 @@ class PlayState extends MusicBeatState
 		blammedLightsBlack = modchartSprites.get('blammedLightsBlack');
 		blammedLightsBlack.alpha = 0.0;
 
-		#if windows
+		#if android
 		screenshader.waveAmplitude = 1;
         screenshader.waveFrequency = 2;
         screenshader.waveSpeed = 1;
@@ -1876,7 +1876,7 @@ class PlayState extends MusicBeatState
 
 	override public function update(elapsed:Float)
 	{
-	#if windows
+	#if android
 	if (curbg != null)
 	{
 		if (curbg.active) // only the furiosity background is active
@@ -2170,7 +2170,7 @@ class PlayState extends MusicBeatState
 		}
 		doDeathCheck();
 
-		#if windows
+		#if android
 		if (curSong.toLowerCase() == 'furiosity')
 			{
 				screenshader.shader.uampmul.value[0] = 0;
